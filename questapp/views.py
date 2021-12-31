@@ -1,11 +1,18 @@
 from django.http import HttpResponse
 from django.shortcuts import render
 from django.views import View
+from .models import Question
+from django.template import loader
 
 
 # Create your views here.
 def index(request):
-    return HttpResponse("You're at the questapp index.")
+    latest_question_list = Question.objects.order_by('-pub_date')[:5]
+    template = loader.get_template('questapp/index.html')
+    context = {
+        'latest_question_list': latest_question_list,
+    }
+    return HttpResponse(template.render(context, request))
 
 
 def detail(request, question_id):
