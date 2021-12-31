@@ -1,4 +1,4 @@
-from django.http import HttpResponse
+from django.http import Http404
 from django.shortcuts import render
 from django.views import View
 from .models import Question
@@ -16,7 +16,11 @@ def index(request):
 
 
 def detail(request, question_id):
-    return HttpResponse(f"You're looking at the question {question_id}.")
+    try:
+        question = Question.objects.get(pk=question_id)
+    except Question.DoNotExist:
+        raise Http404('Question does not exist')
+    return render(request=request, template_name='questapp/detail.html', context={'question': question})
 
 
 def results(request, question_id):
