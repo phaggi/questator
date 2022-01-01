@@ -21,7 +21,8 @@ def detail(request, question_id):
         question = Question.objects.get(pk=question_id)
     except Question.DoNotExist:
         raise Http404('Question does not exist')
-    return render(request=request, template_name='questapp/detail.html', context={'question': question})
+    context = {'question': question}
+    return render(request=request, template_name='questapp/detail.html', context=context)
 
 
 def results(request, question_id):
