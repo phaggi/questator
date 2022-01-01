@@ -1,8 +1,9 @@
-from django.http import Http404
-from django.shortcuts import render
+from django.http import Http404, HttpResponse, HttpResponseRedirect
+from django.shortcuts import render, get_object_or_404
 from django.views import View
-from .models import Question
+from .models import Question, Choice
 from django.template import loader
+from django.urls import reverse
 
 
 # Create your views here.
@@ -28,6 +29,14 @@ def results(request, question_id):
 
 
 def vote(request, question_id):
-    return HttpResponse(f"You're voting on question {question_id}.")
-
-
+    question = get_object_or_404(Question, pk=question_id)
+    try:
+        selected_choice = question.choice_set.get(pk=request.POST['choice'])
+    except (KeyError, Choice.DoesNotExist):
+        context = {'question': question, 'error_message': "You didn't select a choice."}
+        result = render(request=request, template_name='questapp/detail.html', context=context)
+    else:
+        selected_choice.votes += 1
+        selected_choice.save()
+        result = HttpResponseRedirect(reverse('questapp:results', args=(question_id,)))
+    return result
