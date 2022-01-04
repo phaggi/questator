@@ -41,14 +41,25 @@ class QuestionModelTest(TestCase):
         self.assertIsInstance(choice.votes, int)
 
 
-def create_question(question_text, days):
+def create_question_wit_no_choices(question_text, days):
     """
     Create a question with the given `question_text` and published the
     given number of `days` offset to now (negative for questions published
     in the past, positive for questions that have yet to be published).
     """
     time = timezone.now() + datetime.timedelta(days=days)
-    return Question.objects.create(question_text=question_text, pub_date=time)
+    question = Question.objects.create(question_text=question_text, pub_date=time)
+    return question
+
+
+def create_question(question_text, days):
+    question = create_question_wit_no_choices(question_text, days)
+    add_choices(question)
+    return question
+
+
+def add_choices(question: Question):
+    question.choice_set.create(choice_text='test choice', votes=0)
 
 
 class QuestionIndexViewTest(TestCase):
