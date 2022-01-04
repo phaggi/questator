@@ -93,6 +93,16 @@ class QuestionIndexViewTest(TestCase):
         self.assertQuerysetEqual(responce.context['latest_question_list'],
                                  ['<Question: Past question 2.>', '<Question: Past question 1.>'])
 
+    def test_question_with_no_choises(self):
+        question = create_question_wit_no_choices(question_text='Past question.', days=-30)
+        print(f'choices:{question.choice_set.count()}')
+        self.assertEqual(question.choice_set.count(), 0)
+
+    def test_question_with_choice(self):
+        question = create_question(question_text='Past question.', days=-30)
+        print(f'choices:{question.choice_set.count()}')
+        self.assertEqual(question.choice_set.count(), 1)
+
 
 class QuestionDetailViewTests(TestCase):
     def test_future_question(self):
