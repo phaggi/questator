@@ -2,6 +2,7 @@ import datetime
 from django.test import TestCase
 from django.utils import timezone
 from django.db import models
+from django.urls import reverse
 
 from .models import Question, Choice
 
@@ -38,4 +39,14 @@ class QuestionModelTest(TestCase):
     def test_votes_is_int(self):
         choice = Choice()
         self.assertIsInstance(choice.votes, int)
+
+
+
+
+class QuestionIndexViewTest(TestCase):
+    def test_no_question(self):
+        responce = self.client.get(reverse('questapp:index'))
+        self.assertEqual(responce.status_code, 200)
+        self.assertContains(responce, 'No polls are available')
+        self.assertQuerysetEqual(responce.context['latest_question_list'], [])
 
