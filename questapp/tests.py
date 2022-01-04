@@ -81,3 +81,11 @@ class QuestionIndexViewTest(TestCase):
         responce = self.client.get(reverse('questapp:index'))
         self.assertQuerysetEqual(responce.context['latest_question_list'],
                                  ['<Question: Past question 2.>', '<Question: Past question 1.>'])
+
+
+class QuestionDetailViewTests(TestCase):
+    def test_future_question(self):
+        future_question = create_question(question_text='Future question.', days=5)
+        url = reverse(viewname='questapp:detail', args=(future_question.id,))
+        responce = self.client.get(url)
+        self.assertEqual(responce.status_code, 404)
